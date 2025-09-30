@@ -1,66 +1,80 @@
-FROM osrf/ros:humble-desktop
+FROM ros:humble
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ARG USER_UID=1001
-ARG USER_GID=1001
-ARG USERNAME=user
+# ARG USER_UID=1001
+# ARG USER_GID=1001
+# ARG USERNAME=user
 
-WORKDIR /workspaces
+# WORKDIR /tmp
 
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    && mkdir -p -m 0700 /run/user/"${USER_UID}" \
-    && mkdir -p -m 0700 /run/user/"${USER_UID}"/gdm \
-    && chown user:user /run/user/"${USER_UID}" \
-    && chown user:user /workspaces \
-    && chown user:user /run/user/"${USER_UID}"/gdm \
-    # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
-    && apt-get update \
-    && apt-get install -y sudo \
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+# RUN groupadd --gid $USER_GID $USERNAME \
+#     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+#     #
+#     # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
+#     && apt-get update \
+#     && apt-get install -y sudo \
+#     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+#     && chmod 0440 /etc/sudoers.d/$USERNAME
 
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ros-humble-hardware-interface \
-    ros-humble-generate-parameter-library \
-    ros-humble-xacro \
-    ros-humble-controller-interface \
-    ros-humble-realtime-tools \
-    ros-humble-ros2-control-test-assets \
-    ros-humble-controller-manager \
-    ros-humble-joint-state-publisher-gui \
-    ros-humble-control-msgs \
-    ros-humble-gazebo-ros \
-    ros-humble-control-toolbox \
-    ros-humble-ackermann-msgs \
-    ros-humble-ament-cmake \
-    ros-humble-ament-cmake-clang-format \
-    ros-humble-moveit \
-    ros-humble-joint-state-broadcaster \
-    libignition-gazebo6-dev \
-    ros-humble-joint-trajectory-controller \
+RUN apt-get update -y && apt-get install -y --allow-unauthenticated \
+    clang-14 \
+    clang-format-14 \
+    clang-tidy-14 \
+    python3-pip \
     libpoco-dev \
     libeigen3-dev \
-    ament-cmake-clang-tidy \
+    libignition-gazebo6-dev \
+    ros-humble-control-msgs \
+    ros-humble-xacro \
+    ros-humble-ament-cmake-clang-format \
+    ros-humble-ament-clang-format \
+    ros-humble-ament-flake8 \
+    ros-humble-ament-cmake-clang-tidy \
+    ros-humble-angles \
+    ros-humble-ros2-control \
+    ros-humble-realtime-tools \
+    ros-humble-control-toolbox \    
+    ros-humble-controller-manager \
+    ros-humble-hardware-interface \
+    ros-humble-generate-parameter-library \
+    ros-humble-controller-interface \
+    ros-humble-ros2-control-test-assets \
+    ros-humble-controller-manager \
+    ros-humble-rviz2 \
+    ros-humble-joint-state-publisher \
+    ros-humble-joint-state-broadcaster \
+    ros-humble-ros-gz \
     && rm -rf /var/lib/apt/lists/*
 
-ENV XDG_RUNTIME_DIR=/run/user/"${USER_UID}"
+RUN python3 -m pip install -U \
+    argcomplete \
+    flake8-blind-except \
+    flake8-builtins \
+    flake8-class-newline \
+    flake8-comprehensions \
+    flake8-deprecated \
+    flake8-docstrings \
+    flake8-import-order \
+    flake8-quotes \
+    pytest-repeat \
+    pytest-rerunfailures \
+    pytest
 
-RUN mkdir ~/source_code
+RUN mkdir ~/source_code    
 RUN cd ~/source_code && git clone https://github.com/frankaemika/libfranka.git \
     && cd libfranka \
-    && git switch fr3-develop \
+    && git checkout 0.9.2 \
     && git submodule init \
     && git submodule update \
     && mkdir build && cd build \
     && cmake -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF  .. \
     && make franka -j$(nproc) \
     && cpack -G DEB \
-    && sudo dpkg -i libfranka*.deb
-    
-# set the default user to the newly created user
-USER $USERNAME
+    && dpkg -i libfranka*.deb
 
-RUN echo 'source "/opt/ros/$ROS_DISTRO/setup.bash"' >>~/.bashrc
+# set the default user to the newly created user
+# USER $USERNAME
+RUN echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ~/.bashrc
+RUN echo "source /workspaces/install/setup.bash" >> ~/.bashrc
+WORKDIR /workspaces/

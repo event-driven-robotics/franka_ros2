@@ -5,7 +5,7 @@
 	"dockerComposeFile": "./docker-compose.yml",
 	"service": "ros2_control",
 	"workspaceFolder": "/workspaces",
-	"remoteUser": "user",
+	"remoteUser": "root",
 	"customizations": {
 		"vscode": {
 			"extensions": [

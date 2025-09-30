@@ -1,5 +1,3 @@
-version: '2'
-
 services:
   ros2_control:
     build: .
@@ -15,4 +13,3 @@ services:
     environment:
       QT_X11_NO_MITSHM: 1
       DISPLAY: $DISPLAY
-    user: $UID:$UID
