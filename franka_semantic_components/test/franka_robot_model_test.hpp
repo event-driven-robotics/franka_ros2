@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Franka Emika GmbH
+// Copyright (c) 2023 Franka Robotics GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ class FrankaRobotModelTest : public ::testing::Test {
 
  protected:
   const size_t size = 2;
-  const std::string robot_name = "panda";
+  const std::string robot_name = "fr3";
   const std::string franka_model_interface_name = "robot_model";
   const std::string franka_state_interface_name = "robot_state";
 

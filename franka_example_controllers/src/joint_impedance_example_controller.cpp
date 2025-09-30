@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Franka Emika GmbH
+// Copyright (c) 2023 Franka Robotics GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <franka_example_controllers/joint_impedance_example_controller.hpp>
+#include <franka_example_controllers/robot_utils.hpp>
 
 #include <cassert>
 #include <cmath>
@@ -47,11 +48,12 @@ JointImpedanceExampleController::state_interface_configuration() const {
 
 controller_interface::return_type JointImpedanceExampleController::update(
     const rclcpp::Time& /*time*/,
-    const rclcpp::Duration& /*period*/) {
+    const rclcpp::Duration& period) {
   updateJointStates();
   Vector7d q_goal = initial_q_;
-  auto time = this->get_node()->now() - start_time_;
-  double delta_angle = M_PI / 8.0 * (1 - std::cos(M_PI / 2.5 * time.seconds()));
+  elapsed_time_ = elapsed_time_ + period.seconds();
+
+  double delta_angle = M_PI / 8.0 * (1 - std::cos(M_PI / 2.5 * elapsed_time_));
   q_goal(3) += delta_angle;
   q_goal(4) += delta_angle;
 
@@ -67,7 +69,7 @@ controller_interface::return_type JointImpedanceExampleController::update(
 
 CallbackReturn JointImpedanceExampleController::on_init() {
   try {
-    auto_declare<std::string>("arm_id", "panda");
+    auto_declare<std::string>("arm_id", "");
     auto_declare<std::vector<double>>("k_gains", {});
     auto_declare<std::vector<double>>("d_gains", {});
   } catch (const std::exception& e) {
@@ -105,14 +107,31 @@ CallbackReturn JointImpedanceExampleController::on_configure(
     k_gains_(i) = k_gains.at(i);
   }
   dq_filtered_.setZero();
+
+  auto parameters_client =
+      std::make_shared<rclcpp::AsyncParametersClient>(get_node(), "robot_state_publisher");
+  parameters_client->wait_for_service();
+
+  auto future = parameters_client->get_parameters({"robot_description"});
+  auto result = future.get();
+  if (!result.empty()) {
+    robot_description_ = result[0].value_to_string();
+  } else {
+    RCLCPP_ERROR(get_node()->get_logger(), "Failed to get robot_description parameter.");
+  }
+
+  arm_id_ = robot_utils::getRobotNameFromDescription(robot_description_, get_node()->get_logger());
+
   return CallbackReturn::SUCCESS;
 }
 
 CallbackReturn JointImpedanceExampleController::on_activate(
     const rclcpp_lifecycle::State& /*previous_state*/) {
   updateJointStates();
+  dq_filtered_.setZero();
   initial_q_ = q_;
-  start_time_ = this->get_node()->now();
+  elapsed_time_ = 0.0;
+
   return CallbackReturn::SUCCESS;
 }
 

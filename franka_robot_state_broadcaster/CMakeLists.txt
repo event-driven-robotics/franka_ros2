@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(franka_robot_state_broadcaster)
 
-# Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 14)
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -17,6 +17,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
     control_msgs
     controller_interface
     controller_manager
+    ros2_control_test_assets
     franka_msgs
     franka_semantic_components
     generate_parameter_library
@@ -24,7 +25,8 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
     rclcpp_lifecycle
     rcutils
     realtime_tools
-    sensor_msgs)
+    sensor_msgs
+    visualization_msgs)
 
 
 # find dependencies
@@ -88,7 +90,7 @@ if(BUILD_TESTING)
     if(CHECK_TIDY)
         find_package(ament_cmake_clang_tidy REQUIRED)
         set(ament_cmake_clang_tidy_CONFIG_FILE ../.clang-tidy)
-        ament_clang_tidy(${CMAKE_BINARY_DIR})
+        ament_clang_tidy(${CMAKE_BINARY_DIR} --jobs 6)
     endif()
 
     add_rostest_with_parameters_gmock(${PROJECT_NAME}_test

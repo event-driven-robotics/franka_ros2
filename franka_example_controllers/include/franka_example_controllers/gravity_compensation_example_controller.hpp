@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Franka Emika GmbH
+// Copyright (c) 2023 Franka Robotics GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,21 +32,16 @@ namespace franka_example_controllers {
  */
 class GravityCompensationExampleController : public controller_interface::ControllerInterface {
  public:
-  FRANKA_EXAMPLE_CONTROLLERS_PUBLIC
   CallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override;
 
-  FRANKA_EXAMPLE_CONTROLLERS_PUBLIC
   CallbackReturn on_init() override;
 
-  FRANKA_EXAMPLE_CONTROLLERS_PUBLIC
   [[nodiscard]] controller_interface::InterfaceConfiguration command_interface_configuration()
       const override;
 
-  FRANKA_EXAMPLE_CONTROLLERS_PUBLIC
   [[nodiscard]] controller_interface::InterfaceConfiguration state_interface_configuration()
       const override;
 
-  FRANKA_EXAMPLE_CONTROLLERS_PUBLIC
   controller_interface::return_type update(const rclcpp::Time& time,
                                            const rclcpp::Duration& period) override;
 

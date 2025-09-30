@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Franka Emika GmbH
+// Copyright (c) 2023 Franka Robotics GmbH
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ class JointImpedanceExampleController : public controller_interface::ControllerI
 
  private:
   std::string arm_id_;
+  std::string robot_description_;
   const int num_joints = 7;
   Vector7d q_;
   Vector7d initial_q_;
@@ -49,7 +50,7 @@ class JointImpedanceExampleController : public controller_interface::ControllerI
   Vector7d dq_filtered_;
   Vector7d k_gains_;
   Vector7d d_gains_;
-  rclcpp::Time start_time_;
+  double elapsed_time_{0.0};
   void updateJointStates();
 };
 
