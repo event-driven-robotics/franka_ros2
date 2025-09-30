@@ -12,7 +12,7 @@ endif()
 
 option(CHECK_TIDY "Adds clang-tidy tests" OFF)
 
-set(THIS_PACKAGE_INCLUDE_DEPENDS franka_hardware franka_msgs hardware_interface rclcpp_lifecycle)
+set(THIS_PACKAGE_INCLUDE_DEPENDS controller_interface franka_hardware franka_msgs hardware_interface rclcpp_lifecycle)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
