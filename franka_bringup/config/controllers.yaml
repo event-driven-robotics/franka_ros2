@@ -11,6 +11,9 @@ controller_manager:
     move_to_start_example_controller:
       type: franka_example_controllers/MoveToStartExampleController
 
+    relay_controller:
+      type: franka_example_controllers/RelayController
+
     model_example_controller:
       type: franka_example_controllers/ModelExampleController
 

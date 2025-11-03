@@ -21,6 +21,7 @@ find_package(pluginlib REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(franka_msgs REQUIRED)
+find_package(serial_link_interfaces REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(franka_semantic_components)
 find_package(generate_parameter_library)
@@ -32,7 +33,9 @@ add_library(
         src/joint_impedance_example_controller.cpp
         src/model_example_controller.cpp
         src/move_to_start_example_controller.cpp
-        src/motion_generator.cpp)
+        src/motion_generator.cpp
+        src/relay_controller.cpp)
+
 target_include_directories(
         ${PROJECT_NAME}
         PUBLIC
@@ -47,6 +50,7 @@ ament_target_dependencies(
         rclcpp
         rclcpp_lifecycle
         franka_semantic_components
+        serial_link_interfaces
 )
 
 generate_parameter_library(franka_example_controllers_parameters src/model_example_controller_parameters.yaml)

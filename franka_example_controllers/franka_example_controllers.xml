@@ -23,4 +23,10 @@
             The franka model example controller evaluates and prints the dynamic model of Franka Emika Robots.
         </description>
     </class>
+    <class name="franka_example_controllers/RelayController"
+           type="franka_example_controllers::RelayController" base_class_type="controller_interface::ControllerInterface">
+        <description>
+            The relay controller subscribes to a topic to receive commands and sets them in the controller interface.
+        </description>
+    </class>
 </library>
