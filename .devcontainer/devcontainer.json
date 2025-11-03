@@ -2,17 +2,18 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
 {
 	"name": "ROS2 Humble",
-	"dockerComposeFile": "./docker-compose.yml",
+	"dockerComposeFile": "../docker/docker-compose.yml",
 	"service": "ros2_control",
-	"workspaceFolder": "/workspaces",
-	"remoteUser": "user",
+	"workspaceFolder": "/workspaces/src",
+	"postStartCommand": "git config --global --add safe.directory /workspaces/src && cd /workspaces && colcon build && echo 'source /workspaces/install/setup.bash' >>~/.bashrc",
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"ms-python.python",
 				"bungcip.better-toml",
 				"ms-vscode.cpptools",
-				"ms-vscode.cpptools-extension-pack"
+				"ms-vscode.cpptools-extension-pack",
+				"ms-iot.vscode-ros"
 			],
 			"settings": {
 				"terminal.integrated.defaultProfile.linux": "bash",

@@ -2,6 +2,7 @@ version: '2'
 
 services:
   ros2_control:
+    image: franka_ros2_devcontainer-ros2_control
     build: .
     network_mode: "host"
     privileged: true
@@ -15,4 +16,5 @@ services:
     environment:
       QT_X11_NO_MITSHM: 1
       DISPLAY: $DISPLAY
+      FASTDDS_BUILTIN_TRANSPORTS: UDPv4
     user: $UID:$UID
